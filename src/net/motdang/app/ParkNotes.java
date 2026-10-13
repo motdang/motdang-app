@@ -10,7 +10,7 @@ import android.net.Uri;
 
 /** The parking notifications. */
 final class ParkNotes {
-    static final String PAGE = "https://motdang.net/parking/";
+    static final String PAGE = "https://motdang.net/appmap/";
     static final String CH_ONGOING = "park", CH_GUESS = "park_guess", CH_REMIND = "park_remind";
     static final int ONGOING = 20, GUESS = 21, REMIND = 22;
 

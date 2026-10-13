@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 /** What the app was opened with → the motdang.net page to show. Plain Java, so test/ can run it. */
 final class Links {
     static final String HOME = "https://motdang.net/";
+    /** What the app opens on: the map with your bike, parking and toilets. */
+    static final String START = "https://motdang.net/appmap/";
 
     private Links() {}
 
@@ -19,7 +21,7 @@ final class Links {
                     || data.equals("https://motdang.net")) return data;
             if (data.regionMatches(true, 0, "geo:", 0, 4)) return map(geo(data), null);
         }
-        return HOME;
+        return START;
     }
 
     /** geo:0,0?q=coffee is a search for "coffee"; geo:18.7,98.9 is a point. The map reads both. */

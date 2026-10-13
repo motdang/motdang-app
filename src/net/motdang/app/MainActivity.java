@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
         s.setDomStorageEnabled(true);
         s.setGeolocationEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(true);
-        s.setUserAgentString(s.getUserAgentString() + " MotDangApp/0.3");
+        s.setUserAgentString(s.getUserAgentString() + " MotDangApp/0.4");
         web.addJavascriptInterface(new Bridge(), "MotDangApp");
 
         web.setWebViewClient(new WebViewClient() {
