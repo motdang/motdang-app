@@ -9,8 +9,7 @@ JAR=$SDK/platforms/android-36/android.jar
 rm -rf build && mkdir -p build/gen build/classes build/dex build/test
 "$BT/aapt2" compile --dir res -o build/res.zip
 "$BT/aapt2" link -I "$JAR" --manifest AndroidManifest.xml -o build/base.apk build/res.zip \
-  --java build/gen --min-sdk-version 26 --target-sdk-version 36 --version-code 2 --version-name 0.2 \
-  --rename-manifest-package net.motdang.android
+  --java build/gen --min-sdk-version 26 --target-sdk-version 36 --version-code 3 --version-name 0.3
 javac -nowarn -source 11 -target 11 -encoding UTF-8 -classpath "$JAR" -d build/classes \
   $(find src build/gen -name '*.java') 2>&1 | grep -v 'bootstrap class path' || true
 # Links is plain Java: its test runs on the Mac.
