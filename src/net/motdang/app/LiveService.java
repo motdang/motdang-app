@@ -161,7 +161,7 @@ public class LiveService extends Service implements LocationListener {
             c.setReadTimeout(15_000);
             c.setDoOutput(true);
             c.setRequestProperty("content-type", "application/json");
-            c.setRequestProperty("user-agent", "MotDangApp/0.1 (Android)");
+            c.setRequestProperty("user-agent", "MotDangApp/0.2 (Android)");
             try (OutputStream o = c.getOutputStream()) { o.write(body.getBytes(StandardCharsets.UTF_8)); }
             return c.getResponseCode();
         } catch (Exception e) {

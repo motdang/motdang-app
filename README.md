@@ -10,11 +10,19 @@ motdang.net in one window, plus what a web page cannot do on a phone:
   name, and geo: links from "open in maps".
 - The phone's own share sheet for everything the site sends.
 
+- Parking. ParkService notices where a bike or car was left (GPS only while
+  moving, then steps and a minute of standing still confirm it), keeps the spot,
+  a walk-away trail and a history, and posts "Parked here" with Not mine and
+  Photo buttons. The page motdang.net/parking/ reads it through window.MotDangApp
+  (parkState, parkHere, parkNote, parkClear, parkNotMine, parkHistory, parkWatch,
+  parkWatchState, parkSetupNext, parkSetup, parkRemind, parkRemindClear, vibrate).
+  ParkDetector, ParkBook and ParkText are plain Java with tests in test/.
+
 Links off motdang.net (LINE, Grab, phone numbers) open in their own apps.
 
 Build: `./build.sh` → `build/motdang.apk` (SDK build-tools 36, platform 36,
 JDK 17; no Gradle; same toolchain as baan-launcher). The build runs
-test/LinksTest.java. Updates must be signed with `motdang-app.keystore`.
+test/LinksTest.java, ParkDetectorTest.java and ParkBookTest.java. Updates must be signed with `motdang-app.keystore`.
 
 Install: `adb install -r build/motdang.apk`, or open the .apk on the phone.
 
