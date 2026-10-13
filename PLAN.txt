@@ -1,0 +1,164 @@
+MOT DANG — THE APP THAT DOES WHAT BEER DOES
+Plan, 10 Oct 2026. For Nan and Marcus. Nothing here is built yet.
+
+
+THE APP IN ONE LINE
+
+You ask for something in English or Thai. The app finds the right place. If that
+is not enough, a helper calls around in Thai and tells you what they found.
+
+
+WHO USES IT
+
+  Customers   Americans and other farang without a Thai partner. Thai people.
+  Providers   Thai shops, clinics, labs, tradespeople.
+  Helpers     Beer, Marcus, Marcus's friends (Thai, English; some Shan).
+
+
+THE LOOP  (from the lab search Beer did for Nan)
+
+  1  Ask        "a lab that can analyze compounds"
+  2  List       motdang + Google Maps + Google + what a local knows
+  3  Calls      a helper calls down the list in Thai
+  4  Summary    who does it, who doesn't, price, when, the closest match
+  5  Book       or stop: "none of them does this" is an answer too
+  6  Back in    each call goes into motdang as "checked by phone, <date>",
+                so the next person gets the answer without a call
+
+
+THE TEN, AND WHO DOES EACH
+
+  #   Function            The app                         A helper
+  1   Knows who           searches all four sources       picks, throws out
+  2   Fair price          prices heard on past calls      asks on the call
+  3   Open now            hours + last phone check        asks on the call
+  4   Calls in Thai       writes the call script          makes the call
+  5   What to say         a card: Thai, sounded out,      —
+                          English; show it to them
+  6   What to bring       steps for an errand             —
+                          (license, bank, PO box)
+  7   Reads Thai          photo → English                 when the app is unsure
+  8   Pays the Thai way   how-to for PromptPay, Grab,     see decision 6
+                          LINE MAN
+  9   Comes with you      —                               goes along
+  10  Sorts it out        —                               calls back, goes back
+
+First to build, in her order: 1 (search), then someone to the house.
+
+
+SCREENS — CUSTOMER  (four, one big button each)
+
+  1  ASK      One box, one camera button. Language follows the phone.
+              Under the box, three examples that change:
+              "plumber tomorrow" · "dentist open Sunday" · "bus to Chiang Rai"
+
+  2  ANSWER   Up to five places. Each one shows: name in English and Thai,
+              open now or not, price if known, how far, last checked.
+              Buttons on each: Call · Directions · What to say.
+              For an errand (license, bank account): the steps and what to bring.
+              At the bottom, the big button:  [ Have someone call around ]
+
+  3  JOB      Like waiting for a Grab: the helper's photo and name,
+              "calling 3 of 7", and a chat with the helper.
+
+  4  RESULT   The summary. Buttons: Book · Send someone · Done.
+
+
+SCREENS — HELPER  (three)
+
+  1  JOBS     New jobs, mine, finished.
+  2  CALLING  The list of places, tap to call, the Thai script on screen.
+              After each call, four taps: does it? · price · when · note.
+  3  SUMMARY  Written from those taps. The helper fixes it and sends.
+
+
+SCREENS — NAN  (one)
+
+  Jobs, money in, helpers paid, and what went back into motdang.
+
+
+SCREENS — PROVIDERS
+
+  Later (phase 4): claim the listing, set hours and prices, get bookings.
+
+
+NO MANUAL — HOW WE CHECK
+
+  - One screen, one job, one big button.
+  - Buttons are words people say: Ask, Call, Book, Done.
+  - Five people who have never seen it, one task each
+    ("find a plumber for tomorrow"). Every question they ask
+    changes a screen. Thai testers and farang testers, separately.
+  - Thai words written by Beer or Marcus, not machine translation.
+
+
+WHAT ALREADY EXISTS
+
+  motdang search + records, both provinces       → step 2
+  google_ids.py: Google place IDs on records     → step 2, links to Maps
+  ask.motdang.net (white-label-ai): Thai model,  → step 1, reading the ask
+    open-now worked out, Cloudflare + D1
+  Laila ops suite: Worker + D1, counter, reports → job board, money ledger
+  this folder: the Android app (WebView, live    → the shell the app ships in
+    location, shares from Google Maps)
+  motdang.net Co., Ltd. (reg. 22 Sep 2026)       → hires helpers, invoices
+  the ops LINE channel                           → helpers are already there
+
+
+BUILD ORDER
+
+  Phase 0  By hand, no code. The ask box on motdang sends the ask to the
+           helpers on LINE. Beer or Marcus searches and calls by hand and
+           replies with a summary. Ten jobs; Nan's own first. Time each one:
+           that number sets the price.
+
+  Phase 1  Ask + Answer screens on motdang's data. The big button starts
+           the Phase 0 flow.
+
+  Phase 2  Helper screens, the four-tap call form, the summary, job status.
+           Call results written back into motdang.
+
+  Phase 3  Someone to the house. A roster of the plumbers, maids and
+           gardeners the helpers have used and would send again. Booking.
+           A helper goes along the first time. Shan helps here.
+
+  Phase 4  Providers claim their listing, set hours and prices, take bookings.
+
+  Phase 5  Errands: steps for the license, bank account, PO box, bus to
+           Chiang Rai; 7-Eleven; ordering on Grab and LINE MAN; the camera
+           reading Thai.
+
+
+DECISIONS FOR NAN
+
+  1  Price per job.
+       a  Free for Phase 0, priced after ten timed jobs.
+       b  Flat price per call-around.
+       c  By the hour.
+     Too low and helpers burn out; too high and nobody tries it.
+
+  2  Helper pay: per job or per hour; paid by motdang.net Co., Ltd.?
+
+  3  Where it lives.
+       a  A web app on motdang.net, added to the home screen, wrapped in
+          this Android app. Fastest; works for both.
+       b  A LINE Official Account. Thai people live in LINE; LINE charges
+          for messages past a free monthly number.
+       c  Both: web first, LINE as a second door.
+
+  4  Name and address. A new public name or domain is yours.
+
+  5  Google search inside the app.
+       a  Google's Places API: paid per search.
+       b  The helper searches Google by hand, as Beer does now.
+
+  6  Money.
+       a  How customers pay: PromptPay to the company for Thai customers;
+          card or PayPal for farang.
+       b  Whether a helper ever pays a provider for a customer. That means
+          holding the customer's money.
+
+  7  Who does the first ten jobs: Beer, Marcus, or both.
+
+  8  Who sees a job. Jobs hold home addresses and health questions
+     (pap smear, dentist). Helpers only, helpers + Nan, or wider.

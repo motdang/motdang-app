@@ -1,0 +1,16 @@
+build/
+motdang-app.keystore
+node_modules/
+.dev.vars
+.env*
+.wrangler/
+__pycache__/
+*.keystore
+*.pem
+cache/
+dist/
+*.bak*
+*.log
+locks/
+scratch/
+.DS_Store
