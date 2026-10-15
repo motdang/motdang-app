@@ -46,6 +46,29 @@ THE TEN, AND WHO DOES EACH
 First to build, in her order: 1 (search), then someone to the house.
 
 
+A CASE — 1 AND 10, THE HANDYMAN  (ops LINE, 13–15 Oct 2026)
+
+  12 Oct  drains slow, shower drains need cleaning; photos in the channel
+  13 Oct  Beer books a maintenance man; he arrives late, works; Beer pays online after
+  14 Oct  lights flicker, an LED out; Beer offers the same man
+  15 Oct  09:34 not there. Beer calls him: late again.
+          10:07 Beer drops him — "so weird, not communicat and I'm not trusting him
+          anymore" — and starts looking for another. Household: rather wait for good.
+
+  What Beer did, as steps the app and a helper can repeat:
+    a. kept the job open after booking, not "done" at booking
+    b. at the booked time, noticed he was not there and called (10, calls back)
+    c. weighed wait-for-him against start-over, out loud, with the customer
+    d. dropped him and reopened the search the same morning (1, picks, throws out)
+    e. said sorry for the customer's lost time
+
+  What it asks of the build (proposals, for Nan):
+    - a job carries the booked time; past it, the customer gets one button: not here
+    - "not here" goes to the helper, who calls (a, b)
+    - a provider's history on our jobs — on time, late, no-show, dropped — sits on
+      the provider record the helper sees before booking (d)
+
+
 SCREENS — CUSTOMER  (four, one big button each)
 
   1  ASK      One box, one camera button. Language follows the phone.
