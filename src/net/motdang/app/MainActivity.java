@@ -11,6 +11,9 @@ import android.graphics.Insets;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.view.View;
 import android.view.WindowInsets;
 import android.webkit.GeolocationPermissions;
@@ -63,7 +66,7 @@ public class MainActivity extends Activity {
         s.setDomStorageEnabled(true);
         s.setGeolocationEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(true);
-        s.setUserAgentString(s.getUserAgentString() + " MotDangApp/0.1");
+        s.setUserAgentString(s.getUserAgentString() + " MotDangApp/0.4");
         web.addJavascriptInterface(new Bridge(), "MotDangApp");
 
         web.setWebViewClient(new WebViewClient() {
@@ -113,6 +116,12 @@ public class MainActivity extends Activity {
 
         if (saved != null) web.restoreState(saved);
         else open(getIntent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ParkService.ensure(this);
     }
 
     @Override
@@ -175,6 +184,7 @@ public class MainActivity extends Activity {
             geoCb.invoke(geoOrigin, hasLocation(), false);
             geoCb = null;
         }
+        if (code == ParkSetup.REQ) ParkService.ensure(this);
     }
 
     @Override
@@ -225,6 +235,139 @@ public class MainActivity extends Activity {
             long until = p.getLong("until", 0);
             if (id.isEmpty() || until <= System.currentTimeMillis()) return "";
             return "{\"id\":\"" + id + "\",\"until\":" + until + ",\"ok\":" + p.getLong("ok", 0) + "}";
+        }
+
+        // ---- parking (ParkService, ParkStore) ----
+
+        /** The current park as JSON, or "" when there is none. */
+        @JavascriptInterface
+        public String parkState() {
+            return onSite ? ParkStore.currentJson(MainActivity.this) : "";
+        }
+
+        /** She says where she parked. Numbers arrive as strings. Returns the park JSON, or "". */
+        @JavascriptInterface
+        public String parkHere(String lat, String lng, String acc, String vehicle, String note) {
+            if (!onSite) return "";
+            double la, lo, ac;
+            try {
+                la = Double.parseDouble(lat);
+                lo = Double.parseDouble(lng);
+            } catch (Exception e) { return ""; }
+            if (!(la >= -90 && la <= 90 && lo >= -180 && lo <= 180)) return "";
+            try { ac = Double.parseDouble(acc); } catch (Exception e) { ac = 0; }
+            if (!(ac >= 0)) ac = 0;
+            Park p = ParkStore.told(MainActivity.this, la, lo, ac, vehicle, note);
+            ParkNotes.cancelGuess(MainActivity.this);
+            ParkService.syncIfRunning();
+            return ParkStore.json(p).toString();
+        }
+
+        @JavascriptInterface
+        public String parkNote(String note, String level) {
+            if (!onSite) return "";
+            if (!ParkStore.note(MainActivity.this, note, level)) return "";
+            ParkService.syncIfRunning();
+            return ParkStore.currentJson(MainActivity.this);
+        }
+
+        /** Found it: the current park moves to history, marked left. Returns "1" or "0". */
+        @JavascriptInterface
+        public String parkClear() {
+            if (!onSite) return "";
+            Park p = ParkStore.leave(MainActivity.this, System.currentTimeMillis());
+            ParkNotes.cancelGuess(MainActivity.this);
+            ParkService.syncIfRunning();
+            return p == null ? "0" : "1";
+        }
+
+        /** Drops the current park when it is a guess and brings the one before it back. Returns "1" or "0". */
+        @JavascriptInterface
+        public String parkNotMine() {
+            if (!onSite) return "";
+            boolean ok = ParkStore.notMine(MainActivity.this, 0);
+            ParkNotes.cancelGuess(MainActivity.this);
+            ParkService.syncIfRunning();
+            return ok ? "1" : "0";
+        }
+
+        /** A JSON array, newest first. */
+        @JavascriptInterface
+        public String parkHistory() {
+            return onSite ? ParkStore.historyJson(MainActivity.this) : "";
+        }
+
+        /** "1" turns watching on, "0" off. Returns parkWatchState(). */
+        @JavascriptInterface
+        public String parkWatch(String on) {
+            if (!onSite) return "";
+            boolean want = "1".equals(on);
+            ParkStore.setWatching(MainActivity.this, want);
+            if (want) ParkService.ensure(MainActivity.this); else ParkService.stop();
+            return ParkSetup.state(MainActivity.this);
+        }
+
+        /** off, on, needs-location, needs-background, needs-activity or needs-battery. */
+        @JavascriptInterface
+        public String parkWatchState() {
+            return onSite ? ParkSetup.state(MainActivity.this) : "";
+        }
+
+        /** The step parkSetup() would run: location, background, activity, notifications, battery, vivo or done. */
+        @JavascriptInterface
+        public String parkSetupNext() {
+            return onSite ? ParkSetup.next(MainActivity.this) : "";
+        }
+
+        /** Runs the next step and returns its name ("done" when none is left). */
+        @JavascriptInterface
+        public String parkSetup() {
+            if (!onSite) return "";
+            String step = ParkSetup.next(MainActivity.this);
+            runOnUiThread(() -> ParkSetup.run(MainActivity.this));
+            return step;
+        }
+
+        /** One reminder at a time; it opens the parking page at #back. The alarm is inexact. */
+        @JavascriptInterface
+        public String parkRemind(String atMs, String text) {
+            if (!onSite || text == null || text.trim().isEmpty()) return "";
+            long at;
+            try { at = (long) Double.parseDouble(atMs); } catch (Exception e) { return ""; }
+            ParkReceiver.schedule(MainActivity.this, at, text.trim().length() > 200 ? text.trim().substring(0, 200) : text.trim());
+            return "1";
+        }
+
+        @JavascriptInterface
+        public String parkRemindClear() {
+            if (!onSite) return "";
+            ParkReceiver.clear(MainActivity.this);
+            return "1";
+        }
+
+        /** Comma list of milliseconds, vibrate first: "40,60,40" is buzz, pause, buzz. */
+        @JavascriptInterface
+        public void vibrate(String pattern) {
+            if (!onSite || pattern == null) return;
+            String[] parts = pattern.split(",");
+            long[] w = new long[Math.min(parts.length, 20) + 1];
+            long total = 0;
+            for (int k = 0; k < w.length - 1; k++) {
+                long v;
+                try { v = Long.parseLong(parts[k].trim()); } catch (Exception e) { return; }
+                v = Math.max(0, Math.min(v, 1000));
+                total += v;
+                w[k + 1] = v;
+            }
+            if (w.length < 2 || total > 5000) return;
+            try {
+                Vibrator vib = Build.VERSION.SDK_INT >= 31
+                        ? getSystemService(VibratorManager.class).getDefaultVibrator()
+                        : getSystemService(Vibrator.class);
+                vib.vibrate(VibrationEffect.createWaveform(w, -1));
+            } catch (Exception e) {
+                // no vibrator
+            }
         }
     }
 }

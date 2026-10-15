@@ -12,7 +12,7 @@ public class LinksTest {
         Method m = c.getDeclaredMethod("pageFor", String.class, String.class, String.class, String.class);
         m.setAccessible(true);
         String S = "android.intent.action.SEND", V = "android.intent.action.VIEW";
-        eq((String) m.invoke(null, null, null, null, null), "https://motdang.net/", "opened plain: the front page");
+        eq((String) m.invoke(null, null, null, null, null), "https://motdang.net/appmap/", "opened plain: the map");
         eq((String) m.invoke(null, S, null, "Wat Phra Singh\nhttps://maps.app.goo.gl/DM78scCKekcnPGZf9", "Wat Phra Singh"),
            "https://motdang.net/map.html?st=Wat+Phra+Singh%0Ahttps%3A%2F%2Fmaps.app.goo.gl%2FDM78scCKekcnPGZf9&sn=Wat+Phra+Singh",
            "a Google Maps share lands on the map");
@@ -23,7 +23,7 @@ public class LinksTest {
         eq((String) m.invoke(null, V, "https://motdang.net/cm/p/x.html", null, null),
            "https://motdang.net/cm/p/x.html", "a motdang link opens as itself");
         eq((String) m.invoke(null, V, "https://evil.example/motdang.net/", null, null),
-           "https://motdang.net/", "another site's link does not load in the window");
+           "https://motdang.net/appmap/", "another site's link does not load in the window");
         System.out.println(failed == 0 ? "\nall passed" : "\n" + failed + " FAILED");
         System.exit(failed == 0 ? 0 : 1);
     }
